@@ -29,11 +29,9 @@ describe('Should use Prop-Types to type check inputs', () =>
     {
         it('Test all required props are required', () => 
         {
-            console.error = propTypeError;
             let oneReqPropMissing = {...REQUIRED_PROPS};
             delete oneReqPropMissing[prop];
-            expect(() => {render(<Toggle {...oneReqPropMissing} />)}).toThrowErrorWithMessage(
-                `Missing the ${prop} prop didn't cause an error to be thrown!`);
+            expect(() => {render(<Toggle {...oneReqPropMissing} />)}).toThrowRequiredPropError(prop);
         })
     };
 });

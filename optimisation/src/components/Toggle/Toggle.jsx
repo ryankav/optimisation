@@ -31,6 +31,6 @@ function Toggle(props)
 
 Toggle.propTypes = {open : PropTypes.bool.isRequired,
                     label: PropTypes.string.isRequired,
-                    onClick: PropTypes.func.isRequired };
+                    onClick: PropTypes.func.isRequired};
 
 export default Toggle
