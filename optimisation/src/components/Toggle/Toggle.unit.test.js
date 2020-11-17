@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { axe } from 'jest-axe';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor, Simulate } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import propTypeError from '../../utils/prop-type-error';
 import Toggle from './Toggle';
@@ -12,7 +12,6 @@ const REQUIRED_PROPS = {
     label : 'switch',
     onClick : mockCallback
 };
-
 const para =  "Description of what the Toggle does";
 
 
@@ -91,9 +90,30 @@ describe('On click the toggle should perform the call back', () =>
             onClick={mockCallback} 
             {...REQUIRED_PROPS}
             />);
-        await userEvent.click(screen.getByRole('checkbox'), REQUIRED_PROPS.label);
-        await userEvent.click(screen.getByRole('checkbox'), REQUIRED_PROPS.label);
-        await userEvent.click(screen.getByRole('checkbox'), REQUIRED_PROPS.label);
+        await userEvent.click(screen.getByRole('checkbox'));
+        await userEvent.click(screen.getByRole('checkbox'));
+        await userEvent.click(screen.getByRole('checkbox'));
         expect(mockCallback).toHaveBeenCalledTimes(3);
     })
 });
+
+describe('Expect the CSS style to change after an onClick event that changes it\'s state', ()=>
+{
+    function WrapperForTest()
+    {
+        const [open, setOpen] = useState(true);
+        const props={...REQUIRED_PROPS};
+        delete props.open;
+        delete props.onClick;
+
+        return(<Toggle {...props} open={open} onClick={() => setOpen(!open)} />);
+    }
+    
+    it('CSS should vary as state is changed through onClick event',async () =>
+    {
+        render(<WrapperForTest />)
+        expect(screen.getByRole('checkbox').closest('div')).toHaveClass('toggle-open');
+        userEvent.click(screen.getByRole('checkbox'));
+        expect(screen.getByRole('checkbox').closest('div')).toHaveClass('toggle-closed');
+    })
+})

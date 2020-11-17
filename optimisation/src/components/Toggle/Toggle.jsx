@@ -3,29 +3,38 @@ import PropTypes from 'prop-types';
 
 function Toggle(props)
 {
-    const {label, description, onClick, open} = props;
+    const {label, description, onClick, open, classes} = props;
+
 
     return (
     <>
-        <label 
-        htmlFor={label}
-        className="toggle-label">
-            {label}
-        </label>
+        <div className="toggle-label">
+            <label 
+            htmlFor={label}
+            className={classes ? classes : false}
+            >
+                {label}
+            </label>
+        </div>
+        
 
-        <input type="checkbox" 
-            id={label} 
-            aria-describedby={`help-${label}`}
-            onClick={onClick}
-            className={`toggle-${open ? 'open' : 'closed'}`}
-        />
+        <div className={open ? 'toggle-open' : 'toggle-closed'}>
+            <input type="checkbox" 
+                id={label} 
+                aria-describedby={description && `help-${label}`}
+                onClick={onClick}
+                className={classes ? classes : false}
+            />
 
+        </div>
+       
+        {description && 
         <p 
             className="hide-element" 
             id={`help-${label}`}
             >
                 {description}
-        </p>
+        </p>}
     </>);
 }
 
