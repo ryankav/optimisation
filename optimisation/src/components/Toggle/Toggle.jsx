@@ -9,7 +9,8 @@ function Toggle(props)
     return (
     <>
         <div className="toggle-label">
-            <label 
+            <label
+            id={`${label}-label`} 
             htmlFor={label}
             className={classes ? classes : false}
             >
@@ -19,11 +20,14 @@ function Toggle(props)
         
 
         <div className={open ? 'toggle-open' : 'toggle-closed'}>
-            <input type="checkbox" 
+            <input
+                type="button"
                 id={label} 
                 aria-describedby={description && `help-${label}`}
                 onClick={onClick}
                 className={classes ? classes : false}
+                aria-pressed={open ? 'true' : 'flase'}
+                aria-labelledby={`${label}-label`}
             />
 
         </div>

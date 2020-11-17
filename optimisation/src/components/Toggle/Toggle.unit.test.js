@@ -67,7 +67,7 @@ describe('Toggle should render as expected', () =>
             {...REQUIRED_PROPS}
             description={para}
             />);
-        expect(screen.getByRole('checkbox')).toBeInTheDocument();
+        expect(screen.getByRole('button')).toBeInTheDocument();
         
     });
 
@@ -90,9 +90,9 @@ describe('On click the toggle should perform the call back', () =>
             onClick={mockCallback} 
             {...REQUIRED_PROPS}
             />);
-        await userEvent.click(screen.getByRole('checkbox'));
-        await userEvent.click(screen.getByRole('checkbox'));
-        await userEvent.click(screen.getByRole('checkbox'));
+        await userEvent.click(screen.getByRole('button'));
+        await userEvent.click(screen.getByRole('button'));
+        await userEvent.click(screen.getByRole('button'));
         expect(mockCallback).toHaveBeenCalledTimes(3);
     })
 });
@@ -112,8 +112,8 @@ describe('Expect the CSS style to change after an onClick event that changes it\
     it('CSS should vary as state is changed through onClick event',async () =>
     {
         render(<WrapperForTest />)
-        expect(screen.getByRole('checkbox').closest('div')).toHaveClass('toggle-open');
-        userEvent.click(screen.getByRole('checkbox'));
-        expect(screen.getByRole('checkbox').closest('div')).toHaveClass('toggle-closed');
+        expect(screen.getByRole('button').closest('div')).toHaveClass('toggle-open');
+        userEvent.click(screen.getByRole('button'));
+        expect(screen.getByRole('button').closest('div')).toHaveClass('toggle-closed');
     })
 })
