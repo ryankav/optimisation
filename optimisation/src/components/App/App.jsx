@@ -8,11 +8,7 @@ const App = () =>
 
         return(
             <>
-                <Toggle
-                    open={open} 
-                    onClick={() => setOpen(!open)}
-                    label={label} 
-                />
+               hello world
             </>
         );
        
