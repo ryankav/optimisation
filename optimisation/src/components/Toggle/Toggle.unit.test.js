@@ -71,7 +71,7 @@ describe('Toggle should render as expected', () =>
         
     });
 
-    it('should render a text element on screen', () =>
+    it('should render a label element on screen', () =>
     {
         render(<Toggle 
             {...REQUIRED_PROPS} 
@@ -95,11 +95,8 @@ describe('On click the toggle should perform the call back', () =>
         await userEvent.click(screen.getByRole('button'));
         expect(mockCallback).toHaveBeenCalledTimes(3);
     })
-});
 
-describe('Expect the CSS style to change after an onClick event that changes it\'s state', ()=>
-{
-    it('CSS should vary as state is changed through onClick event',async () =>
+    it('Should update correctly',async () =>
     {
         function WrapperForTest()
         {
@@ -110,7 +107,10 @@ describe('Expect the CSS style to change after an onClick event that changes it\
         }
         render(<WrapperForTest />)
         expect(screen.getByText('Toggle is open')).toBeInTheDocument();
+        expect(screen.getByRole('button', {'aria-pressed':true})).toBeInTheDocument();
         userEvent.click(screen.getByRole('button'));
         expect(screen.getByText('Toggle is closed')).toBeInTheDocument();
+        expect(screen.getByRole('button', {'aria-pressed':false})).toBeInTheDocument();
     })
-})
+});
+
