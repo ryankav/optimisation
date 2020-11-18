@@ -1,3 +1,13 @@
 :root{
     background-color: #cccccc;
+
+    /*
+        need to define for Toggle:
+        --toggle-button-color,
+        --toggle-open-backgorund-color,
+        --focus-outline-color,
+        --toggle-closed-background-color,
+        --toggle-label-font-color,
+        --toggle-label-font-size,    
+    */
 }
