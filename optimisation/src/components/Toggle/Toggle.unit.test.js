@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { axe } from 'jest-axe';
-import { render, screen, waitFor, Simulate } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import propTypeError from '../../utils/prop-type-error';
 import Toggle from './Toggle';
@@ -99,21 +99,18 @@ describe('On click the toggle should perform the call back', () =>
 
 describe('Expect the CSS style to change after an onClick event that changes it\'s state', ()=>
 {
-    function WrapperForTest()
-    {
-        const [open, setOpen] = useState(true);
-        const props={...REQUIRED_PROPS};
-        delete props.open;
-        delete props.onClick;
-
-        return(<Toggle {...props} open={open} onClick={() => setOpen(!open)} />);
-    }
-    
     it('CSS should vary as state is changed through onClick event',async () =>
     {
+        function WrapperForTest()
+        {
+            const [open, setOpen] = useState(true);
+            let label = `Toggle is ${open ? 'open' : 'closed'}`;
+    
+            return(<Toggle label={label} open={open} onClick={() => setOpen(!open)} />);
+        }
         render(<WrapperForTest />)
-        expect(screen.getByRole('button').closest('div')).toHaveClass('toggle-open');
+        expect(screen.getByText('Toggle is open')).toBeInTheDocument();
         userEvent.click(screen.getByRole('button'));
-        expect(screen.getByRole('button').closest('div')).toHaveClass('toggle-closed');
+        expect(screen.getByText('Toggle is closed')).toBeInTheDocument();
     })
 })

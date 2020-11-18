@@ -1,0 +1,59 @@
+
+.toggle-container {
+    display: inline-flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    padding: 0 5px;
+}
+
+.toggle{
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    margin: 4px;
+    
+}
+
+.toggle-button{
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 20px;
+    border-radius: 20px;
+    background-color: var(--toggle-off-background-color, #eee);
+    align-items: center;
+    border: 0;
+}
+
+.toggle-button:focus{
+    outline: 0;
+    box-shadow: 0 0 2pt 2pt var(--focus-outline-color, black);
+}
+
+.toggle-button[aria-pressed="true"]
+{
+    background-color: var(--toggle-on-backgorund-color,#7983ff);
+}
+
+.toggle-button::after {
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0px;
+    content: '';
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: var(--toggle-button-color, white
+    );
+    transition: all 0.3s;
+}
+
+.toggle-button[aria-pressed="true"]::after{
+    left: 20px;
+}
+
+
+
