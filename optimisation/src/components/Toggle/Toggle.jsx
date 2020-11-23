@@ -4,29 +4,29 @@ import './Toggle.css';
 
 function Toggle(props)
 {
-    const {label, description, onClick, open, classes} = props;
+    const {title, description, onClick, open, classes} = props;
 
 
     return (
     <div className={classes ? `${classes} toggle-container` : 'toggle-container'}>
         <div className="toggle-label-container">
             <label
-            id={`${label}-label`} 
-            htmlFor={label}
+            id={`${title}-label`} 
+            htmlFor={title}
             className="toggle-label"
             >
-                {label}
+                {title}
             </label>
         </div>
         
 
         <div className='toggle'>
             <button
-                id={label} 
-                aria-describedby={description && `help-${label}`}
+                id={title} 
+                aria-describedby={description && `help-${title}`}
                 onClick={onClick}
                 aria-pressed={open ? 'true' : 'flase'}
-                aria-labelledby={`${label}-label`}
+                aria-labelledby={`${title}-label`}
                 className="toggle-button"
             />
         
@@ -36,7 +36,7 @@ function Toggle(props)
         {description && 
         <p 
             className="hide-element toggle-description" 
-            id={`help-${label}`}
+            id={`help-${title}`}
             >
                 {description}
         </p>}
@@ -44,7 +44,7 @@ function Toggle(props)
 }
 
 Toggle.propTypes = {open : PropTypes.bool.isRequired,
-                    label: PropTypes.string.isRequired,
+                    title: PropTypes.string.isRequired,
                     onClick: PropTypes.func.isRequired};
 
 export default Toggle

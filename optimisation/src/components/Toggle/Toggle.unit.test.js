@@ -9,7 +9,7 @@ const mockCallback = jest.fn();
 
 const REQUIRED_PROPS = {
     open : true,
-    label : 'switch',
+    title : 'switch',
     onClick : mockCallback
 };
 const para =  "Description of what the Toggle does";
@@ -77,7 +77,7 @@ describe('Toggle should render as expected', () =>
             {...REQUIRED_PROPS} 
             description={para}
             />);
-        expect(screen.getByText(REQUIRED_PROPS.label)).toBeInTheDocument();
+        expect(screen.getByText(REQUIRED_PROPS.title)).toBeInTheDocument();
     })
 });
 
@@ -101,9 +101,9 @@ describe('On click the toggle should perform the call back', () =>
         function WrapperForTest()
         {
             const [open, setOpen] = useState(true);
-            let label = `Toggle is ${open ? 'open' : 'closed'}`;
+            let title = `Toggle is ${open ? 'open' : 'closed'}`;
     
-            return(<Toggle label={label} open={open} onClick={() => setOpen(!open)} />);
+            return(<Toggle title={title} open={open} onClick={() => setOpen(!open)} />);
         }
         render(<WrapperForTest />)
         expect(screen.getByText('Toggle is open')).toBeInTheDocument();
