@@ -5,15 +5,19 @@ import userEvent from '@testing-library/user-event';
 import propTypeError from '../../utils/prop-type-error';
 import Toggle from './Toggle';
 
-const mockCallback = jest.fn();
+let REQUIRED_PROPS, mockCallback, para;
+beforeEach(()=>
+{
+    mockCallback = jest.fn();
 
-const REQUIRED_PROPS = {
-    open : true,
-    title : 'switch',
-    onClick : mockCallback
-};
-const para =  "Description of what the Toggle does";
-
+    REQUIRED_PROPS = {
+        open : true,
+        title : 'switch',
+        onClick : mockCallback
+    };
+    
+    para =  "Description of what the Toggle does";
+})
 
 describe('Should use Prop-Types to type check inputs', () =>
 {
@@ -28,9 +32,8 @@ describe('Should use Prop-Types to type check inputs', () =>
     {
         it('Test all required props are required', () => 
         {
-            let oneReqPropMissing = {...REQUIRED_PROPS};
-            delete oneReqPropMissing[prop];
-            expect(() => {render(<Toggle {...oneReqPropMissing} />)}).toThrowRequiredPropError(prop);
+            delete REQUIRED_PROPS[prop];
+            expect(() => {render(<Toggle {...REQUIRED_PROPS} />)}).toThrowRequiredPropError(prop);
         })
     };
 });
@@ -87,13 +90,12 @@ describe('On click the toggle should perform the call back', () =>
    it('Should call callback', async () =>
    { 
        render(<Toggle 
-            onClick={mockCallback} 
             {...REQUIRED_PROPS}
             />);
         await userEvent.click(screen.getByRole('button'));
         await userEvent.click(screen.getByRole('button'));
         await userEvent.click(screen.getByRole('button'));
-        expect(mockCallback).toHaveBeenCalledTimes(3);
+        expect(REQUIRED_PROPS.onClick).toHaveBeenCalledTimes(3);
     })
 
     it('Should update correctly',async () =>
@@ -101,9 +103,11 @@ describe('On click the toggle should perform the call back', () =>
         function WrapperForTest()
         {
             const [open, setOpen] = useState(true);
-            let title = `Toggle is ${open ? 'open' : 'closed'}`;
+            REQUIRED_PROPS.title = `Toggle is ${open ? 'open' : 'closed'}`;
+            REQUIRED_PROPS.open=open;
+            REQUIRED_PROPS.onClick = () => setOpen(!open);
     
-            return(<Toggle title={title} open={open} onClick={() => setOpen(!open)} />);
+            return(<Toggle {...REQUIRED_PROPS} />);
         }
         render(<WrapperForTest />)
         expect(screen.getByText('Toggle is open')).toBeInTheDocument();
