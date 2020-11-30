@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
-import DropdownMenu from '../Dropdown/DropdownMenu';
+import React from 'react';
+import DropdownMenu from '../DropdownMenu/DropdownMenu';
 
 const App = () =>
     {
         
-        const items = {test: 'hello',};
+        const items = {test: 'hello', nfl: 'life', again:'help'};
         return(
             <>
-                <DropdownMenu items={items} value={'World'} name={'Name'} />
+                <DropdownMenu menuItems={items} value={'World'} title={'Algorithm'} />
             </>
         );
        
