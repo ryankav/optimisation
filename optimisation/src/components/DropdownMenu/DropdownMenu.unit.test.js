@@ -2,21 +2,24 @@ import React/*,{ useState }*/ from 'react';
 //import { axe } from 'jest-axe';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import propTypeError from '../../utils/prop-type-error';
+import propTypeError from '../../utils/test-utils/prop-type-error';
 import DropdownMenu from './DropdownMenu';
 
 
+const REQUIRED_KEYS = ["menuItems", "value", "title",]
+Object.freeze(REQUIRED_KEYS);
 let REQUIRED_PROPS;
 
 beforeEach(()=>
 {
     REQUIRED_PROPS = {
         menuItems:{
-            "first":"rugby",
-            "second":"help"
+            "first":"Hello",
+            "second":",",
+            "third" : "World"
             },
         value:'test',
-        title: "Algorithm" 
+        title: "Algorithm",
         };
 })
 
@@ -28,16 +31,15 @@ describe('Should use Prop-Types to type check inputs', () =>
         render(<DropdownMenu {...REQUIRED_PROPS} />);
     })
 
-    
-    for(const prop in REQUIRED_PROPS)
+    for(let key of REQUIRED_KEYS)
     {
-        it('Test all required props are required', () => 
+        it('Required props are required', () => 
         {
-            delete REQUIRED_PROPS[prop]
-            expect(() => {render(<DropdownMenu {...REQUIRED_PROPS} />)}).toThrowRequiredPropError(prop);
+            delete REQUIRED_PROPS[key];
+            expect(() => {render(<DropdownMenu {...REQUIRED_PROPS} />)}).toThrowRequiredPropError(key);
         })
-    };
-});
+    }
+})
 
 describe('Expect Dropdown to render correctly', ()=>
 {
@@ -86,6 +88,17 @@ describe('User click input', () =>
         render(<DropdownMenu {...REQUIRED_PROPS} />);
         userEvent.click(screen.getByRole('button'));
         expect(screen.getByText("\u25B4")).toBeInTheDocument();
+    })
+
+    it('Resets focus state after closing', ()=>
+    {
+        render(<DropdownMenu {...REQUIRED_PROPS} />);
+        userEvent.tab();
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowDown', code: 'ArrowDown' });
+        userEvent.click(screen.getByRole('button'));
+        userEvent.click(screen.getByRole('button'));
+        const listItems = (screen.getAllByRole('menuitem'))
+        expect(listItems.includes(document.activeElement)).toBeFalsy();
     })
 
 })
@@ -156,13 +169,68 @@ describe('User Key Input', () =>
         
     })
 
-    // it('should focus on first item after down press', () =>
-    // {
-    //     render(<DropdownMenu {...REQUIRED_PROPS} />);
-    //     userEvent.tab();
-    //     expect(screen.getByRole('button')).toHaveFocus();
-    //     fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowDown', code: 'ArrowDown' });
-    //     const listItems = (screen.getAllByRole('menuitem')).map(item => item.textContent);
-    //     expect(listItems[0]).toHaveFocus();
-    // })
+    it('should focus on first item after down press', () =>
+    {
+        render(<DropdownMenu {...REQUIRED_PROPS} />);
+        userEvent.tab();
+        expect(screen.getByRole('button')).toHaveFocus();
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowDown', code: 'ArrowDown' });
+        const listItems = (screen.getAllByRole('menuitem'));
+        expect(listItems[0]).toHaveFocus();
+    })
+
+    it('should focus on last item after up press', () =>
+    {
+        render(<DropdownMenu {...REQUIRED_PROPS} />);
+        userEvent.tab();
+        expect(screen.getByRole('button')).toHaveFocus();
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowUp', code: 'ArrowUp' });
+        const listItems = (screen.getAllByRole('menuitem'));
+        expect(listItems[listItems.length - 1]).toHaveFocus();
+    })
+
+    it('tab to button and focus second item after two down presses', () =>
+    {
+        render(<DropdownMenu {...REQUIRED_PROPS} />);
+        userEvent.tab();
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowDown', code: 'ArrowDown' });
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowDown', code: 'ArrowDown' });
+        const listItems = (screen.getAllByRole('menuitem'));
+        expect(listItems[1]).toHaveFocus();
+    })
+
+    it('should move to penultimate item after two up presses', () =>
+    {
+        render(<DropdownMenu {...REQUIRED_PROPS} />);
+        userEvent.tab();
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowUp', code: 'ArrowUp' });
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowUp', code: 'ArrowUp' });
+        const listItems = (screen.getAllByRole('menuitem'));
+        if(3 > listItems.length)
+        {
+            console.log('Not enough list items for test to be valid. So forcing test to fail')
+            expect(1).toEqual(0);
+        }
+        expect(listItems[listItems.length - 2]).toHaveFocus()
+    })
+
+    it('should wrap correctly from bottom to top', () =>
+    {
+        render(<DropdownMenu {...REQUIRED_PROPS} />);
+        userEvent.tab();
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowUp', code: 'ArrowUp' });
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowDown', code: 'ArrowDown' });
+        const listItems = (screen.getAllByRole('menuitem'));
+        expect(listItems[0]).toHaveFocus();
+    })
+
+    it('should wrap correctly from top to bottom', () =>
+    {
+        render(<DropdownMenu {...REQUIRED_PROPS} />);
+        userEvent.tab();
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowDown', code: 'ArrowDown' });
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowUp', code: 'ArrowUp' });
+        const listItems = (screen.getAllByRole('menuitem'));
+        expect(listItems[listItems.length - 1]).toHaveFocus();
+    })
 })

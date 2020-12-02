@@ -3,23 +3,24 @@ import PropTypes from 'prop-types';
 import DropdownMenuItems from './DropdownMenuItems';
 import useGetObjectSize from '../../utils/custom-hooks/object-size/GetObjectSize';
 
+/*TODO LIST
+
+- extract keystroke function from event listeners
+- come up with name for menu/open close so they become one function
+
+*/
+
 
 function DropdownMenu(props)
 {
 
     const {menuItems, value, title} = props;
     const [open, setOpen] = useState(false);
-    const focusIndex = useRef(null);
+    const [focusIndex, setFocusIndex] = useState(null);
     const [numberOfItems] = useGetObjectSize(menuItems);
     
-    const dropdownMenuItems = (<DropdownMenuItems title={title} 
-        focusIndex={focusIndex.current}
-        menuItems={menuItems}
-        />); 
     
-    
-        
-    const buttonClick = () => {setOpen(!open)}
+    const buttonClick = () => {!open ? expandMenu() : contractMenu()};
 
     const buttonKeyPress = (event) => {
         const { key } = event;
@@ -32,15 +33,83 @@ function DropdownMenu(props)
 
         if('ArrowUp' === key)
         {
-            focusIndex.current = numberOfItems - 1;
+            moveFocusUpWithWrap();
         }
         else
         {
-            focusIndex.current = 0;
+            moveFocusDownWithWrap();
         }
 
         setOpen(!open);
     }
+
+    const itemKeyPress = (event) =>
+    {
+        const { key } = event;
+
+        if(!['ArrowDown', 'ArrowUp'].includes(key))
+        {
+            return;
+        }
+
+        event.preventDefault();
+
+        if('ArrowDown' === key)
+        {
+            moveFocusDownWithWrap();
+        }
+        else if('ArrowUp' === key)
+        {
+            moveFocusUpWithWrap();
+        }
+
+    }
+
+    const moveFocusDownWithWrap = () =>
+    {
+        if(null === focusIndex||numberOfItems <= focusIndex + 1)
+        {
+            setFocusIndex(0);
+        }
+        else
+        {
+            setFocusIndex(focusIndex+1);
+        }
+        
+        return;
+    }
+
+    const moveFocusUpWithWrap = () =>
+    {
+        if(null === focusIndex || 0 > focusIndex - 1)
+        {
+            setFocusIndex(numberOfItems - 1);
+        }
+        else
+        {
+            setFocusIndex(focusIndex-1)
+        }
+
+        return;
+    }
+
+    const expandMenu = () => 
+    {
+        setOpen(!open);
+    }
+
+    const contractMenu = () => 
+    {
+        setFocusIndex(null);
+        setOpen(!open);
+    }
+
+
+    const dropdownMenuItems = (<DropdownMenuItems title={title} 
+        focusIndex={focusIndex}
+        menuItems={menuItems}
+        itemKeyPress={itemKeyPress}
+        />); 
 
     return(
     <div className='dropdown-container'>

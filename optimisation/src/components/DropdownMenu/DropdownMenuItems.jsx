@@ -5,18 +5,22 @@ import useRefArrayCreator from '../../utils/custom-hooks/ref-array-creator/Creat
 
 function DropdownMenuItems(props)
 {
-    const {menuItems, focusIndex, title} = props;
+    const {menuItems, focusIndex, title, itemKeyPress} = props;
     const [menuItemRefs] = useRefArrayCreator(menuItems);
     const [keys] = useGetObjectKeys(menuItems);
 
     useEffect(() => 
     {
+
         if(isNaN(focusIndex) || null == focusIndex)
         {
             return;
         }
+        
         menuItemRefs.current[focusIndex].current.focus();
+
         return;
+
     }, [focusIndex, menuItemRefs]);
 
     return (
@@ -27,6 +31,7 @@ function DropdownMenuItems(props)
                                 (<li role='menuitem'
                                     key={menuItem}
                                     ref={menuItemRefs.current[index]}
+                                    onKeyDown={itemKeyPress}
                                     tabIndex="-1"
                                     >
                                     {menuItem}
@@ -38,7 +43,9 @@ function DropdownMenuItems(props)
 
 DropdownMenuItems.propTypes = {menuItems : PropTypes.objectOf(PropTypes.string).isRequired,
                                 title: PropTypes.string.isRequired,
-                                focusIndex : PropTypes.number
+                                itemKeyPress : PropTypes.func.isRequired,
+                                focusIndex : PropTypes.number,
+                                
                             };
 
 export default DropdownMenuItems;

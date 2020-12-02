@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { axe } from 'jest-axe';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import propTypeError from '../../utils/prop-type-error';
+import propTypeError from '../../utils/test-utils/prop-type-error';
 import Toggle from './Toggle';
 
+const REQUIRED_KEYS = ["open", "title", "onClick"];
+Object.freeze(REQUIRED_KEYS);
 let REQUIRED_PROPS, mockCallback, para;
 beforeEach(()=>
 {
@@ -28,7 +30,7 @@ describe('Should use Prop-Types to type check inputs', () =>
     })
 
     
-    for(const prop in REQUIRED_PROPS)
+    for(const prop of REQUIRED_KEYS)
     {
         it('Test all required props are required', () => 
         {
