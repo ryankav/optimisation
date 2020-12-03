@@ -7,6 +7,7 @@ import useGetObjectSize from '../../utils/custom-hooks/object-size/GetObjectSize
 
 - extract keystroke function from event listeners
 - come up with name for menu/open close so they become one function
+-decouple the check for keys and functionality if key defined but no implementation tests don't work! 
 
 */
 
@@ -18,17 +19,27 @@ function DropdownMenu(props)
     const [open, setOpen] = useState(false);
     const [focusIndex, setFocusIndex] = useState(null);
     const [numberOfItems] = useGetObjectSize(menuItems);
+    const buttonRef = useRef(null);
     
     
     const buttonClick = () => {!open ? expandMenu() : contractMenu()};
 
     const buttonKeyPress = (event) => {
         const { key } = event;
-        if(!['Enter', ' ', 'ArrowDown', 'ArrowUp'].includes(key))
+        if(!['Enter', ' ', 'ArrowDown', 'ArrowUp', 'Escape'].includes(key))
         {
             return;
         }
         
+        if('Escape' === key)
+        {
+            if(open)
+            {
+                contractMenu();
+            }
+            return;
+        }
+
         event.preventDefault();
 
         if('ArrowUp' === key)
@@ -40,14 +51,14 @@ function DropdownMenu(props)
             moveFocusDownWithWrap();
         }
 
-        setOpen(!open);
+        !open ? expandMenu() : contractMenu();
     }
 
     const itemKeyPress = (event) =>
     {
         const { key } = event;
 
-        if(!['ArrowDown', 'ArrowUp'].includes(key))
+        if(!['ArrowDown', 'ArrowUp', 'Escape', 'Enter'].includes(key))
         {
             return;
         }
@@ -61,6 +72,14 @@ function DropdownMenu(props)
         else if('ArrowUp' === key)
         {
             moveFocusUpWithWrap();
+        }
+        else if('Escape' === key)
+        {
+            contractMenu();
+        }
+        else if('Enter' === key)
+        {
+            contractMenu();
         }
 
     }
@@ -102,6 +121,7 @@ function DropdownMenu(props)
     {
         setFocusIndex(null);
         setOpen(!open);
+        buttonRef.current.focus();
     }
 
 
@@ -125,6 +145,7 @@ function DropdownMenu(props)
                 aria-controls={`${title}-menu`}
                 onClick={buttonClick}
                 onKeyDown={buttonKeyPress}
+                ref={buttonRef}
                 >
                 {value}
                 <span 

@@ -101,6 +101,15 @@ describe('User click input', () =>
         expect(listItems.includes(document.activeElement)).toBeFalsy();
     })
 
+    it('after open with click should close when escape pressed', () =>
+    {
+        render(<DropdownMenu {...REQUIRED_PROPS} />);
+        userEvent.click(screen.getByRole('button'));
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'Escape', code: 'Escape' });
+        const items = screen.queryAllByRole('menuitem');
+        expect(items).toHaveLength(0);
+    })
+
 })
 
 
@@ -165,7 +174,8 @@ describe('User Key Input', () =>
         userEvent.tab();
         expect(screen.getByRole('button')).toHaveFocus();
         fireEvent.keyDown(document.activeElement || document.body, { key: 'Tab', code: 'Tab'});
-        expect(screen.queryByRole('menuitem')).not.toBeInTheDocument();
+        const items = screen.queryAllByRole('menuitem');
+        expect(items).toHaveLength(0);
         
     })
 
@@ -233,4 +243,45 @@ describe('User Key Input', () =>
         const listItems = (screen.getAllByRole('menuitem'));
         expect(listItems[listItems.length - 1]).toHaveFocus();
     })
+
+    it('should close the menu on esc being pressed', () => 
+    {
+        render(<DropdownMenu {...REQUIRED_PROPS} />);
+        userEvent.tab();
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowDown', code: 'ArrowDown' });
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'Escape', code: 'Escape' });
+        const items = screen.queryAllByRole('menuitem');
+        expect(items).toHaveLength(0);
+    })
+
+    it('should close the menu on esc and remove focus from list', () =>
+    {
+        render(<DropdownMenu {...REQUIRED_PROPS} />);
+        userEvent.tab();
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowUp', code: 'ArrowUp' });
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'Escape', code: 'Escape' });
+        userEvent.click(screen.getByRole('button'));
+        const items = screen.getAllByRole('menuitem');
+        expect(items.includes(document.activeElement)).toBeFalsy();
+    })
+
+    it('should move focus from item to button on close', () =>
+    {
+        render(<DropdownMenu {...REQUIRED_PROPS} />);
+        userEvent.tab();
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowUp', code: 'ArrowUp' });
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'Escape', code: 'Escape' });
+        const button = screen.getByRole('button');
+        expect(document.activeElement==button).toBeTruthy();
+    })
+
+    it('expect menu to close after enter pressed', () =>
+    {
+        render(<DropdownMenu {...REQUIRED_PROPS} />);
+        userEvent.tab();
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'ArrowUp', code: 'ArrowUp' });
+        fireEvent.keyDown(document.activeElement || document.body, { key: 'Enter', code: 'Enter' });
+        expect(screen.queryByRole('menuitem')).not.toBeInTheDocument();
+    })
+     
 })
